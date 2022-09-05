@@ -17,14 +17,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-18.04, ubuntu-20.04, ubuntu-22.04, macos-10.15, macos-11, macos-12, windows-2019, windows-2022 ]
-        ruby: [ '1.9', '2.0', '2.1', '2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '3.0', '3.1', ruby-head, jruby, jruby-head, truffleruby, truffleruby-head, truffleruby+graalvm, truffleruby+graalvm-head ]
-        include:
-        - { os: windows-2019, ruby: mingw }
-        - { os: windows-2019, ruby: mswin }
-        - { os: windows-2022, ruby: mingw }
-        - { os: windows-2022, ruby: mswin }
-        - { os: windows-2022, ruby: ucrt  }
+        os: [ macos-10.15, macos-11, macos-12 ]
+        ruby: [ truffleruby+graalvm, truffleruby+graalvm-head ]
         exclude:
         - { os: windows-2019, ruby: '1.9' }
         - { os: windows-2019, ruby: debug }
@@ -48,6 +42,14 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
+      continue-on-error: true
+    - run: cat /Users/runner/.rubies/truffleruby+graalvm-head/graalvm/Contents/Home/languages/ruby/src/main/c/openssl/mkmf.log
+    - run: /Users/runner/.rubies/truffleruby+graalvm-head/graalvm/Contents/Home/languages/ruby/lib/truffle/post_install_hook.sh
+      continue-on-error: true
+      env:
+        RUBYOPT: "-d"
+    - run: cat /Users/runner/.rubies/truffleruby+graalvm-head/graalvm/Contents/Home/languages/ruby/src/main/c/openssl/mkmf.log
+    - run: sysctl machdep.cpu
     - run: ruby -v
     - name: PATH
       shell: pwsh
@@ -138,156 +140,3 @@ jobs:
     - name: Windows JRuby
       if: startsWith(matrix.os, 'windows') && startsWith(matrix.ruby, 'jruby')
       run: gem install sassc
-
-  testNoGemfile:
-    name: "Test with no Gemfile"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: rm Gemfile
-      - uses: ./
-        with:
-          ruby-version: '2.6'
-      - run: ruby -v
-
-  testLatestRubygemsVersion:
-    name: "Test rubygems: latest upgrades the default RubyGems version"
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: ./
-      with:
-        ruby-version: '2.6'
-        rubygems: latest
-    - run: ruby -e "exit(Gem.rubygems_version > Gem::Version.new('3.0.3'))"
-
-  testFixedRubygemsVersionUpgrades:
-    name: "Test rubygems: version upgrades RubyGems to that version if the default is older"
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: ./
-      with:
-        ruby-version: '2.6'
-        rubygems: 3.2.3
-    - run: gem --version | grep -F "3.2.3"
-
-  testFixedRubygemsVersionNoop:
-    name: "Test rubygems: version noops if the default is newer"
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: ./
-      with:
-        ruby-version: '3.1.0'
-        rubygems: 3.2.3
-    - run: gem --version | grep -F "3.3.3"
-
-  testUseBundlerFromRubyGemsUpdate:
-    name: "Test rubygems: version uses the Bundler installed by the rubygems update"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./
-        with:
-          ruby-version: '2.2'
-          rubygems: 2.7.11
-      - run: gem --version | grep -F "2.7.11"
-      - run: bundle --version | grep -F "1.16.6"
-
-  testFixedBundlerVersionForOldRuby:
-    name: "Test bundler: 1.x for old Ruby"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./
-        with:
-          ruby-version: '2.2'
-          bundler: 1.16.6
-      - run: bundle --version | grep -F "1.16.6" # And not 1.17.x from ~> 1
-
-  testMajorBundlerVersion:
-    name: "Test with a major Bundler version"
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: ./
-      with:
-        ruby-version: '2.6'
-        bundler: 2
-    - run: bundle --version | grep -P "Bundler version 2\.\d+\.\d+"
-
-  testMinorBundlerVersion:
-    name: "Test with a minor Bundler version"
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: ./
-      with:
-        ruby-version: '2.6'
-        bundler: 2.2
-    - run: bundle --version | grep -P "Bundler version 2\.2\.\d+"
-
-  testExactBundlerVersion:
-    name: "Test with an exact Bundler version"
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: ./
-      with:
-        ruby-version: '2.6'
-        bundler: 2.2.3
-    - run: bundle --version | grep -F "Bundler version 2.2.3"
-
-  testDependencyOnBundler1:
-    name: "Test gemfile depending on Bundler 1"
-    runs-on: ubuntu-latest
-    env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/bundler1.gemfile
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./
-        with:
-          ruby-version: '2.7'
-          bundler: 1
-          bundler-cache: true
-      - run: bundle --version | grep -F "Bundler version 1."
-
-  testGemfileMatrix:
-    strategy:
-      fail-fast: false
-      matrix:
-        gemfile: [ rails5, rails6 ]
-    name: "Test with ${{ matrix.gemfile }} gemfile"
-    runs-on: ubuntu-latest
-    env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./
-        with:
-          ruby-version: '2.6'
-          bundler-cache: true
-      - run: bundle exec rails --version
-
-  testTruffleRubyNokogiri:
-    name: "Test installing a Gemfile with nokogiri on TruffleRuby"
-    runs-on: ubuntu-latest
-    env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/nokogiri.gemfile
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./
-        with:
-          ruby-version: truffleruby-head
-          bundler-cache: true
-      - run: bundle list | grep nokogiri
-
-  lint:
-    runs-on: ubuntu-20.04
-    steps:
-    - uses: actions/checkout@v3
-    - run: yarn install
-    - run: yarn run package
-    - name: Check generated files are up to date
-      run: git diff --exit-code

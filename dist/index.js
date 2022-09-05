@@ -65891,7 +65891,7 @@ async function installWithRubyBuild(engine, version, rubyPrefix) {
 
   const rubyName = `${engine}-${version === 'head' ? 'dev' : version}`
   await common.measure(`Installing ${engine}-${version} with ruby-build`, async () => {
-    await exec.exec(`${rubyBuildDir}/bin/ruby-build`, [rubyName, rubyPrefix])
+    await exec.exec(`${rubyBuildDir}/bin/ruby-build`, ['--verbose', rubyName, rubyPrefix])
   })
 
   await io.rmRF(rubyBuildDir)
