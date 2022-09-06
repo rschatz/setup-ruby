@@ -44,17 +44,19 @@ jobs:
 #        bundler-cache: true
 #      continue-on-error: true
     - run: |
-        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvm-build-revert-epsilon-gc/graalvm-ce-java17-darwin-amd64-22.3.0-20220905.190239-57.tar.gz
-        tar xf graalvm-ce-java17-darwin-amd64-22.3.0-20220905.190239-57.tar.gz
+        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvms/b1c013648351d0ba9e7efa8b257d63bd9897786a/graalvm-ce-java17-darwin-amd64-22.3.0-20220824.235325-48.tar.gz
+        tar xf graalvm-ce-*.tar.gz
         cd graalvm-ce-java17-22.3.0-dev/Contents/Home
-        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvm-build-revert-epsilon-gc/llvm-installable-svm-java17-darwin-amd64-22.3.0-20220905.204024-57.jar
-        bin/gu install --file llvm-installable-svm-java17-darwin-amd64-22.3.0-20220905.204024-57.jar
-        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvm-build-revert-epsilon-gc/llvm-toolchain-installable-java17-darwin-amd64-22.3.0-20220905.203944-57.jar
-        bin/gu install --file llvm-toolchain-installable-java17-darwin-amd64-22.3.0-20220905.203944-57.jar
-        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvm-build-revert-epsilon-gc/ruby-installable-svm-java17-darwin-amd64-22.3.0-20220905.204616-57.jar
-        bin/gu install --file ruby-installable-svm-java17-darwin-amd64-22.3.0-20220905.204616-57.jar
+
+        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvms/b1c013648351d0ba9e7efa8b257d63bd9897786a/llvm-installable-svm-java17-darwin-amd64-22.3.0-20220825.024447-48.jar
+        bin/gu install --file llvm-installable-*.jar
+
+        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvms/b1c013648351d0ba9e7efa8b257d63bd9897786a/llvm-toolchain-installable-java17-darwin-amd64-22.3.0-20220825.024433-48.jar
+        bin/gu install --file llvm-toolchain-installable-*.jar
+
+        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvms/b1c013648351d0ba9e7efa8b257d63bd9897786a/ruby-installable-svm-java17-darwin-amd64-22.3.0-20220825.024613-48.jar
+        bin/gu install --file ruby-installable-*.jar
     - run: graalvm-ce-java17-22.3.0-dev/Contents/Home/languages/ruby/lib/truffle/post_install_hook.sh
-      continue-on-error: true
     - run: cat graalvm-ce-java17-22.3.0-dev/Contents/Home/languages/ruby/src/main/c/openssl/mkmf.log
     - run: ruby -v
     - name: PATH
