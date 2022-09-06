@@ -44,17 +44,17 @@ jobs:
 #        bundler-cache: true
 #      continue-on-error: true
     - run: |
-        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvms/73f7e2f41c3d642d0ee7b21a6e97849f9323bfdf/graalvm-ce-java11-darwin-amd64-22.3.0-20220819.205213-46.tar.gz
+        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvms/35137ce8c2a604b2b2c7de6c3333052432234e25/graalvm-ce-java11-darwin-amd64-22.3.0-20220906.151432-63.tar.gz
         tar xf graalvm-ce-*.tar.gz
         cd graalvm-ce-java11-22.3.0-dev/Contents/Home
 
-        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvms/73f7e2f41c3d642d0ee7b21a6e97849f9323bfdf/llvm-installable-svm-java11-darwin-amd64-22.3.0-20220819.204445-46.jar
+        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvms/35137ce8c2a604b2b2c7de6c3333052432234e25/llvm-installable-svm-java11-darwin-amd64-22.3.0-20220906.161730-63.jar
         bin/gu install --file llvm-installable-*.jar
 
-        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvms/73f7e2f41c3d642d0ee7b21a6e97849f9323bfdf/llvm-toolchain-installable-java11-darwin-amd64-22.3.0-20220819.204423-46.jar
+        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvms/35137ce8c2a604b2b2c7de6c3333052432234e25/llvm-toolchain-installable-java11-darwin-amd64-22.3.0-20220906.161701-63.jar
         bin/gu install --file llvm-toolchain-installable-*.jar
 
-        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvms/73f7e2f41c3d642d0ee7b21a6e97849f9323bfdf/ruby-installable-svm-java11-darwin-amd64-22.3.0-20220819.204716-46.jar
+        wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvms/35137ce8c2a604b2b2c7de6c3333052432234e25/ruby-installable-svm-java11-darwin-amd64-22.3.0-20220906.162006-63.jar
         bin/gu install --file ruby-installable-*.jar
     - run: graalvm-ce-java11-22.3.0-dev/Contents/Home/languages/ruby/lib/truffle/post_install_hook.sh
     - run: cat graalvm-ce-java11-22.3.0-dev/Contents/Home/languages/ruby/src/main/c/openssl/mkmf.log
