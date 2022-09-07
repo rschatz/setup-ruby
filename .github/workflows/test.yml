@@ -56,6 +56,12 @@ jobs:
 
         wget https://lafo.ssw.uni-linz.ac.at/pub/tmp-graalvms/ddf06c189430574a3188abcb5738ad8632049b53/ruby-installable-svm-java11-darwin-amd64-22.3.0-20220906.164315-64.jar
         bin/gu install --file ruby-installable-*.jar
+    - run: |
+        graalvm-ce-java11-22.3.0-dev/Contents/Home/languages/llvm/native/bin/graalvm-native-clang -v
+        echo "@@@@ retcode: $?"
+        echo "int main() { return 0; }" > test.c
+        graalvm-ce-java11-22.3.0-dev/Contents/Home/languages/llvm/native/bin/graalvm-native-clang -v test.c
+        echo "@@@@ retcode: $?"
     - run: graalvm-ce-java11-22.3.0-dev/Contents/Home/languages/ruby/lib/truffle/post_install_hook.sh
     - run: cat graalvm-ce-java11-22.3.0-dev/Contents/Home/languages/ruby/src/main/c/openssl/mkmf.log
       if: ${{ failure() }}
