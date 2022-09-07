@@ -58,6 +58,7 @@ jobs:
         bin/gu install --file ruby-installable-*.jar
     - run: graalvm-ce-java11-22.3.0-dev/Contents/Home/languages/ruby/lib/truffle/post_install_hook.sh
     - run: cat graalvm-ce-java11-22.3.0-dev/Contents/Home/languages/ruby/src/main/c/openssl/mkmf.log
+      if: ${{ failure() }}
     - run: ruby -v
     - name: PATH
       shell: pwsh
