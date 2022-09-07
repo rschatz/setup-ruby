@@ -62,6 +62,12 @@ jobs:
         echo "int main() { return 0; }" > test.c
         graalvm-ce-java11-22.3.0-dev/Contents/Home/languages/llvm/native/bin/graalvm-native-clang -v test.c
         echo "@@@@ retcode: $?"
+        graalvm-ce-java11-22.3.0-dev/Contents/Home/bin/lli a.out
+        echo "@@@@ retcode: $?"
+        graalvm-ce-java11-22.3.0-dev/Contents/Home/bin/lli --version
+        echo "@@@@ retcode: $?"
+        graalvm-ce-java11-22.3.0-dev/Contents/Home/bin/ruby --version
+        echo "@@@@ retcode: $?"
     - run: graalvm-ce-java11-22.3.0-dev/Contents/Home/languages/ruby/lib/truffle/post_install_hook.sh
     - run: cat graalvm-ce-java11-22.3.0-dev/Contents/Home/languages/ruby/src/main/c/openssl/mkmf.log
       if: ${{ failure() }}
